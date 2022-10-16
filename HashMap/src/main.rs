@@ -26,7 +26,10 @@ fn main() {
     // When collections store owned values (String), they can still be
     // queried using references (&str).
     if !book_reviews.contains_key("Les Misérables") {
-        println!("We've got {} reviews, but Les Misérables ain't one.", book_reviews.len());
+        println!(
+            "We've got {} reviews, but Les Misérables ain't one.",
+            book_reviews.len()
+        );
     }
 
     // oops, this review has a lot of spelling mistakes, let's delete it.
@@ -37,7 +40,7 @@ fn main() {
     for &book in &to_find {
         match book_reviews.get(book) {
             Some(review) => println!("{book}: {review}"),
-            None => println!("{book} is unreviewed.")
+            None => println!("{book} is unreviewed."),
         }
     }
 
@@ -59,5 +62,35 @@ fn main() {
 
     for (planet, distance) in &solar_distance {
         println!("{planet}: \"{distance}\"");
+    }
+
+    // type inference lets us omit an explicit type signature (which
+    // would be `HashMap<&str, u8>` in this example).
+    let mut player_stats = HashMap::new();
+
+    fn random_stat_buff() -> u8 {
+        // could actually return some random value here - let's just return
+        // some fixed value for now
+        42
+    }
+
+    // insert a key only if it doesn't already exist
+    player_stats.entry("health").or_insert(100);
+
+    // insert a key using a function that provides a new value only if it
+    // doesn't already exist
+    player_stats
+        .entry("defence")
+        .or_insert_with(random_stat_buff);
+
+    // update a key, guarding against the key possibly not being set
+    let stat = player_stats.entry("attack").or_insert(100);
+    *stat += random_stat_buff();
+
+    // modify an entry before an insert with in-place mutation
+    player_stats.entry("mana").and_modify(|mana| *mana += 200).or_insert(100);
+
+    for (k, v) in &player_stats {
+        println!("{k}: \"{v}\"");
     }
 }
