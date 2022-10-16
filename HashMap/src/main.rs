@@ -48,4 +48,16 @@ fn main() {
     for (book, review) in &book_reviews {
         println!("{book}: \"{review}\"");
     }
+
+    // HashMap::from
+    let solar_distance = HashMap::from([
+        ("Mercury", 0.4),
+        ("Venus", 0.7),
+        ("Earth", 1.0),
+        ("Mars", 1.5),
+    ]);
+
+    for (planet, distance) in &solar_distance {
+        println!("{planet}: \"{distance}\"");
+    }
 }
