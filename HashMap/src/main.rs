@@ -1,3 +1,4 @@
+use std::collections::hash_map::RandomState;
 use std::collections::HashMap;
 fn main() {
     // Type inference lets us omit an explicit type signature (which
@@ -88,7 +89,10 @@ fn main() {
     *stat += random_stat_buff();
 
     // modify an entry before an insert with in-place mutation
-    player_stats.entry("mana").and_modify(|mana| *mana += 200).or_insert(100);
+    player_stats
+        .entry("mana")
+        .and_modify(|mana| *mana += 200)
+        .or_insert(100);
 
     for (k, v) in &player_stats {
         println!("{k}: \"{v}\"");
@@ -103,7 +107,10 @@ fn main() {
     impl Viking {
         /// Creates a new Viking.
         fn new(name: &str, country: &str) -> Viking {
-            Viking { name: name.to_string(), country: country.to_string() }
+            Viking {
+                name: name.to_string(),
+                country: country.to_string(),
+            }
         }
     }
 
@@ -117,5 +124,55 @@ fn main() {
     // Use derived implementation to print the status of the vikings.
     for (viking, health) in &vikings {
         println!("{viking:?} has {health} hp");
-    }   
+    }
+
+    let s = RandomState::new();
+    let mut map = HashMap::with_hasher(s);
+    map.insert(1, 2);
+
+    for (k, v) in &map {
+        println!("{k}: \"{v}\"");
+    }
+
+    let s = RandomState::new();
+    let mut map = HashMap::with_capacity_and_hasher(10, s);
+    map.insert(1, 2);
+
+    for (k, v) in &map {
+        println!("{k}: \"{v}\"");
+    }
+    assert!(map.capacity() >= 10);
+
+    let map = HashMap::from([("a", 1), ("b", 2), ("c", 3)]);
+
+    println!("keys-------------");
+    for key in map.keys() {
+        println!("{key}");
+    }
+
+    println!("values-------------");
+    for val in map.values() {
+        println!("{val}");
+    }
+
+    let mut vec: Vec<&str> = map.into_keys().collect();
+    vec.sort_unstable();
+    assert_eq!(vec, ["a", "b", "c"]);
+
+    let mut map_mut = HashMap::from([("a", 1), ("b", 2), ("c", 3)]);
+    println!("values_mut-------------");
+    for val in map_mut.values_mut() {
+        *val = *val + 10;
+    }
+
+    for val in map_mut.values() {
+        println!("{val}");
+    }
+
+    let map_into_value = HashMap::from([("a", 1), ("b", 2), ("c", 3)]);
+    let mut vec_into_value: Vec<i32> = map_into_value.into_values().collect();
+    // The `IntoValues` iterator produces values in arbitrary order, so
+    // the values must be sorted to test them against a sorted array.
+    vec_into_value.sort_unstable();
+    assert_eq!(vec_into_value, [1, 2, 3]);
 }
